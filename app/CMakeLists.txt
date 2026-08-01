@@ -1,2 +1,4 @@
 # Qt UI application shell.
-# Intentionally empty scaffold — populated starting Milestone 1.
+# UI not yet implemented (Milestone 1 focuses on the audio engine core).
+
+add_subdirectory(tools)

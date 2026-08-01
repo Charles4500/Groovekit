@@ -1,0 +1,2 @@
+add_executable(list_audio_devices list_audio_devices.cpp)
+target_link_libraries(list_audio_devices PRIVATE dj_core_audio)
