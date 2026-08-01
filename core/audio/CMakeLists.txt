@@ -1,5 +1,8 @@
 add_library(dj_core_audio
     AudioDeviceManager.cpp
+    WavFile.cpp
+    Deck.cpp
+    AudioEngine.cpp
 )
 
 target_include_directories(dj_core_audio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
