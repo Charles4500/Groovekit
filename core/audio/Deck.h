@@ -20,6 +20,21 @@ public:
     // Real-time safe. Starts playback from the current position.
     void play();
 
+    // Real-time safe. Halts playback; position is preserved for resume.
+    void pause();
+
+    // Real-time safe. Requests a jump to `seconds` into the track. Takes
+    // effect at the start of the next renderInto() call (block-aligned),
+    // never mid-block. Clamped to [0, track duration].
+    void seek(double seconds);
+
+    // Real-time safe. Sets output gain, clamped to [0, 1]. Applied
+    // instantaneously — no ramping yet (can click, see design doc).
+    void setVolume(float volume);
+    float volume() const { return volume_.load(std::memory_order_relaxed); }
+
+    double positionSeconds() const;
+
     bool isPlaying() const { return playing_.load(std::memory_order_relaxed); }
     unsigned int sampleRate() const;
     unsigned int channels() const;
@@ -34,6 +49,10 @@ private:
     std::shared_ptr<const WavFile> track_;
     std::atomic<size_t> positionFrames_{0};
     std::atomic<bool> playing_{false};
+    std::atomic<float> volume_{1.0f};
+    // -1 = no seek pending; otherwise the target frame, applied at the
+    // start of the next renderInto() call.
+    std::atomic<long long> pendingSeekFrames_{-1};
 };
 
 }  // namespace dj::core::audio
