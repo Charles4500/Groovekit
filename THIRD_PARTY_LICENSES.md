@@ -5,6 +5,7 @@ Tracked per ENGINEERING_STANDARDS.md rule 17. Entries must be verified against p
 | Dependency | Purpose | License (unverified) | Verified? | Notes |
 |---|---|---|---|---|
 | Qt | UI framework | LGPLv3 / GPLv3 / Commercial (commonly cited) | No | Must confirm against qt.io licensing page before commercial distribution. |
-| RtAudio | Audio I/O backend | MIT (commonly cited) | No | Must confirm against upstream repository LICENSE file. |
+| RtAudio | Audio I/O backend | MIT (with non-binding request to share modifications upstream) | Yes (2026-08-01, v6.0.1 LICENSE file) | Permissive, no distribution restriction found. |
+| dr_mp3 | MP3 decoding | Public domain / MIT-0 dual-license | Yes (2026-08-01, header comment in upstream `dr_libs/dr_mp3.h`) | See [ADR-002](docs/decisions/ADR-002-mp3-decoder.md). |
 
 No dependency should be added to the build without an entry here (rule 16, 17).
