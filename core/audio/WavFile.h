@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "AudioSource.h"
+
 namespace dj::core::audio {
 
 class WavFileError : public std::runtime_error {
@@ -15,14 +17,13 @@ public:
 // Parses a PCM WAV file (16-bit integer or 32-bit IEEE float) fully into
 // memory as interleaved float samples in [-1, 1]. Throws WavFileError on
 // malformed or unsupported files.
-class WavFile {
+class WavFile : public AudioSource {
 public:
     static WavFile loadFromFile(const std::string& path);
 
-    unsigned int sampleRate() const { return sampleRate_; }
-    unsigned int channels() const { return channels_; }
-    const std::vector<float>& samples() const { return samples_; }  // interleaved
-    size_t frameCount() const { return channels_ == 0 ? 0 : samples_.size() / channels_; }
+    unsigned int sampleRate() const override { return sampleRate_; }
+    unsigned int channels() const override { return channels_; }
+    const std::vector<float>& samples() const override { return samples_; }  // interleaved
 
 private:
     unsigned int sampleRate_ = 0;

@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-#include "WavFile.h"
+#include "AudioSource.h"
 
 namespace dj::core::audio {
 
@@ -13,8 +13,10 @@ namespace dj::core::audio {
 // no locking, no blocking (rule 5).
 class Deck {
 public:
-    // Loads a file from disk. Not real-time safe — call from a non-audio
-    // thread only.
+    // Loads a file from disk. Format is selected by file extension
+    // (.wav / .mp3, case-insensitive) — content is not sniffed. Throws on
+    // unrecognized extensions or decode failure. Not real-time safe — call
+    // from a non-audio thread only.
     void load(const std::string& path);
 
     // Real-time safe. Starts playback from the current position.
@@ -46,7 +48,7 @@ public:
     void renderInto(float* out, size_t frameCount, unsigned int outChannels);
 
 private:
-    std::shared_ptr<const WavFile> track_;
+    std::shared_ptr<const AudioSource> track_;
     std::atomic<size_t> positionFrames_{0};
     std::atomic<bool> playing_{false};
     std::atomic<float> volume_{1.0f};

@@ -1,15 +1,44 @@
 #include "Deck.h"
 
 #include <algorithm>
+#include <stdexcept>
+
+#include "Mp3File.h"
+#include "WavFile.h"
 
 namespace dj::core::audio {
+
+namespace {
+
+std::string toLower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+                    [](unsigned char c) { return std::tolower(c); });
+    return s;
+}
+
+bool hasExtension(const std::string& path, const std::string& ext) {
+    if (path.size() < ext.size()) {
+        return false;
+    }
+    return toLower(path.substr(path.size() - ext.size())) == ext;
+}
+
+}  // namespace
 
 void Deck::load(const std::string& path) {
     // Not real-time safe: replacing track_ while the audio thread reads it
     // in renderInto() is only safe here because callers load before calling
     // play(). Swapping tracks on a live/playing deck needs a proper
     // lock-free handoff and is out of scope for this slice.
-    auto loaded = std::make_shared<WavFile>(WavFile::loadFromFile(path));
+    std::shared_ptr<const AudioSource> loaded;
+    if (hasExtension(path, ".wav")) {
+        loaded = std::make_shared<WavFile>(WavFile::loadFromFile(path));
+    } else if (hasExtension(path, ".mp3")) {
+        loaded = std::make_shared<Mp3File>(Mp3File::loadFromFile(path));
+    } else {
+        throw std::runtime_error("unrecognized audio file extension: " + path);
+    }
+
     positionFrames_.store(0, std::memory_order_relaxed);
     track_ = std::move(loaded);
 }
